@@ -1,57 +1,65 @@
+
 CREATE TABLE users (
     id INTEGER PRIMARY KEY,
-    username TEXT UNIQUE,
-    password_hash TEXT
-);
-
-CREATE TABLE restaurants (
-    id INTEGER PRIMARY KEY,
-    name TEXT,
-    description TEXT,
-    city_id INTEGER,
-    price_level INTEGER,
-    address TEXT,
-    created_by INTEGER,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (city_id) REFERENCES cities(id) ON DELETE CASCADE
+    username TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL
 );
 
 
 CREATE TABLE cities (
     id INTEGER PRIMARY KEY,
-    name TEXT UNIQUE
+    name TEXT UNIQUE NOT NULL
+);
+
+
+CREATE TABLE restaurants (
+    id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT,
+    city_id INTEGER,
+    price_level INTEGER,
+    address TEXT,
+    created_by INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (city_id) REFERENCES cities(id) ON DELETE SET NULL
 );
 
 CREATE TABLE categories (
     id INTEGER PRIMARY KEY,
-    name TEXT UNIQUE
+    name TEXT UNIQUE NOT NULL
 );
 
+
 CREATE TABLE restaurant_categories (
-    restaurant_id INTEGER,
-    category_id INTEGER,
+    restaurant_id INTEGER NOT NULL,
+    category_id INTEGER NOT NULL,
     PRIMARY KEY (restaurant_id, category_id),
-    FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES categories(id)ON DELETE CASCADE
+    FOREIGN KEY (restaurant_id) REFERENCES restaurants(id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
 );
+
 
 CREATE TABLE comments (
     id INTEGER PRIMARY KEY,
-    restaurant_id INTEGER,
-    content TEXT,
+    restaurant_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    content TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (restaurant_id) REFERENCES restaurants(id) ON DELETE CASCADE
 );
 
-CREATE TABLE favourites (
-    user_id INTEGER,
-    restaurant_id INTEGER,
+
+CREATE TABLE favorites (
+    user_id INTEGER NOT NULL,
+    restaurant_id INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (user_id, restaurant_id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (restaurant_id) REFERENCES restaurants(id) ON DELETE CASCADE
 );
+
 
 CREATE INDEX idx_users_username ON users(username);
 CREATE INDEX idx_cities_name ON cities(name);
