@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Uusi ravintola</title>
+</head>
+<body>
+    <h1>Luo uusi ravintola</h1>
+    
+    <form action="/restaurants/create" method="post">
+        <p>
+            Ravintolan nimi: <br />
+            <input type="text" name="name" required value="{{ form.name if form else '' }}">
+        </p>
+        <p>
+            Kuvaus: <br />
+            <textarea name="description" rows="8" cols="60">{{ form.description if form else '' }}</textarea>
+        </p>
+        <p>
+            Osoite: <br />
+            <input type="text" name="address" value="{{ form.address if form else '' }}">
+        </p>
+        <p>
+            Kaupunki: <br />
+            <select id="city_id" name="city_id">
+                <option value="">-- Valitse kaupunki --</option>
+                {% for c in cities %}
+                <option value="{{ c.id }}">{{ c.name }}</option>
+                {% endfor %}
+            </select>
+        </p>
+        <p>
+            Hintataso: <br />
+            <select id="price_level" name="price_level">
+                <option value="">--</option>
+                <option value="1">€</option>
+                <option value="2">€€</option>
+                <option value="3">€€€</option>
+                <option value="4">€€€€</option>
+            </select>
+        </p>
+        <fieldset>
+            <legend>Kategoriat</legend>
+            {% for cat in categories %}
+            <label>
+                <input type="checkbox" name="categories" value="{{ cat.id }}">
+                {{ cat.name }}    
+            </label><br>
+            {% endfor %}
+        </fieldset>
+
+        <p>
+            <button type="submit">Luo ravintola</button>
+        </p>
+    </form>
+</body>
+</html>
+</html>
