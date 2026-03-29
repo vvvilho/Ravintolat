@@ -15,10 +15,12 @@
     {% if session.username %}
         <p>Olet kirjautunut nimellä <strong>{{ session.username }}</strong></p>
         <a href="/logout">Kirjaudu ulos</a> | 
-        <a href="/restaurants/create">Lisää uusi ravintola</a>
+        <a href="/restaurants/create">Lisää uusi ravintola</a> |
+        <a href="/find_restaurants">Haku</a>
     {% else %}
         <a href="/login">Kirjaudu sisään</a> | 
-        <a href="/register">Luo tunnus</a>
+        <a href="/register">Luo tunnus</a> |
+        <a href="/find_restaurants">Haku</a>
     {% endif %}
 
     <hr>

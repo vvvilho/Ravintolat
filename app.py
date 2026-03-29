@@ -21,6 +21,29 @@ def index():
     restaurants = db.query(sql)
     return render_template("index.html", restaurants=restaurants)
 
+@app.route("/find_restaurants")
+def find_restaurants():
+    q = request.args.get("q", "").strip()
+    params = []
+    sql = """
+        SELECT r.id, r.name, r.description, r.created_by
+        FROM restaurants r
+    """
+    where = []
+    if q:
+        where.append("(r.name LIKE ? OR r.description LIKE ?)")
+        like = f"%{q}%"
+        params.extend([like, like])
+
+    if where:
+        sql += " WHERE " + " AND ".join(where)
+
+    sql += " ORDER BY r.name COLLATE NOCASE"
+
+    rows = db.query(sql, params)
+    return render_template("restaurants_list.html", items=rows, q=q)
+
+
 @app.route("/restaurant/<int:restaurant_id>")
 def show_restaurant(restaurant_id):
     sql_res = """
