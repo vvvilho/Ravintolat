@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Muokkaa ravintolaa</title>
+</head>
+<body>
+    <h1>Muokkaa ravintolaa: {{ restaurant.name }}</h1>
+    
+    <form action="/restaurants/edit/{{ restaurant.id }}" method="post">
+        <p>
+            Ravintolan nimi: <br />
+            <input type="text" name="name" required value="{{ restaurant.name }}">
+        </p>
+        <p>
+            Kuvaus: <br />
+            <textarea name="description" rows="5" cols="40">{{ restaurant.description }}</textarea>
+        </p>
+        <p>
+            Kaupunki: <br />
+            <select name="city_id">
+                <option value="">-- Valitse --</option>
+                {% for c in cities %}
+                <option value="{{ c.id }}" {% if c.id == restaurant.city_id %}selected{% endif %}>
+                    {{ c.name }}
+                </option>
+                {% endfor %}
+            </select>
+        </p>
+        <p>
+            Hintataso: <br />
+            <select name="price_level">
+                {% for i in range(1, 5) %}
+                <option value="{{ i }}" {% if i == restaurant.price_level %}selected{% endif %}>
+                    {{ "€" * i }}
+                </option>
+                {% endfor %}
+            </select>
+        </p>
+        <fieldset>
+            <legend>Kategoriat</legend>
+            {% for cat in categories %}
+            <label>
+                <input type="checkbox" name="categories" value="{{ cat.id }}"
+                {% if cat.id in current_cat_ids %}checked{% endif %}>
+                {{ cat.name }}    
+            </label><br>
+            {% endfor %}
+        </fieldset>
+        <br>
+        <button type="submit">Tallenna muutokset</button>
+        <a href="/">Peruuta</a>
+    </form>
+<hr>
+<div style="background-color: #fff0f0; padding: 15px; border: 1px solid #ffcccc;">
+    <h3>Poista ravintola</h3>
+    <p>Haluatko varmasti poistaa tämän ravintolan? Toimintoa ei voi peruuttaa.</p>
+    
+    <form action="/restaurants/delete/{{ restaurant.id }}" method="post" 
+          onsubmit="return confirm('Haluatko varmasti poistaa ravintolan? Kaikki kommentit ja tiedot poistuvat.');">
+        <button type="submit" >
+            Poista ravintola lopullisesti
+        </button>
+    </form>
+</div>
+</body>
+</html>

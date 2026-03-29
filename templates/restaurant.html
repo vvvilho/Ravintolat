@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ restaurant.name }}</title>
+</head>
+<body>
+    <a href="/">← Takaisin listaukseen</a>
+    <hr>
+
+    <h1>{{ restaurant.name }}</h1>
+    
+    <p><strong>Kaupunki:</strong> {{ restaurant.city_name or "Ei ilmoitettu" }}</p>
+    <p><strong>Osoite:</strong> {{ restaurant.address or "Ei osoitetta" }}</p>
+    <p><strong>Hintataso:</strong> {{ "€" * (restaurant.price_level or 0) }}</p>
+    
+    <h3>Kategoriat:</h3>
+    {% if categories %}
+        <ul>
+        {% for cat in categories %}
+            <li>{{ cat.name }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Ei kategorioita.</p>
+    {% endif %}
+
+    <h3>Kuvaus:</h3>
+    <p style="white-space: pre-wrap;">{{ restaurant.description or "Ei kuvausta saatavilla." }}</p>
+
+    <hr>
+    <small>Ilmoituksen lisäsi: {{ restaurant.creator_name }} ({{ restaurant.created_at }})</small>
+
+    {% if session.user_id == restaurant.created_by %}
+        <p>
+            <a href="/restaurants/edit/{{ restaurant.id }}">Muokkaa tai poista ilmoitus</a>
+        </p>
+    {% endif %}
+
+</body>
+</html>

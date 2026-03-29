@@ -1,24 +1,48 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-  <title>Ravintolat</title>
+    <title>Ravintolat</title>
 </head>
-
 <body>
     <h1>Ravintolat</h1>
-  {% if session.username %}
-  <p>
-    Olet kirjautunut nimellä {{ session.username }}
-  </p>
 
-  {% endif %}
-  <p>
-    <a href="/login">Kirjaudu sisään</a>
-    <a href="/register">Luo tunnus</a>
-    <a href="/logout">Kirjaudu ulos</a>
-    <a href="/create">Lisää ravintola</a>
-  </p>
+    {% with messages = get_flashed_messages() %}
+        {% for message in messages %}
+            <p style="font-weight: bold;">{{ message }}</p>
+        {% endfor %}
+    {% endwith %}
+
+    {% if session.username %}
+        <p>Olet kirjautunut nimellä <strong>{{ session.username }}</strong></p>
+        <a href="/logout">Kirjaudu ulos</a> | 
+        <a href="/restaurants/create">Lisää uusi ravintola</a>
+    {% else %}
+        <a href="/login">Kirjaudu sisään</a> | 
+        <a href="/register">Luo tunnus</a>
+    {% endif %}
+
+    <hr>
+
+    <h2>Selaa ravintoloita</h2>
+    
+    {% if restaurants %}
+        <ul>
+        {% for r in restaurants %}
+            <li style="margin-bottom: 15px;">
+                <a href="/restaurant/{{ r.id }}">{{r.name}}</a> ({{ r.city_name or "Ei kaupunkia" }}) <br>
+                Hintataso: {{ "€" * (r.price_level or 0) }} <br>
+                {% if session.user_id and session.user_id == r.created_by %}
+                <small>
+                <a href="/restaurants/edit/{{ r.id }}">Muokkaa / Poista</a>
+                </small>
+                {% endif %}
+
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Tietokannassa ei ole vielä ravintoloita.</p>
+    {% endif %}
+
 </body>
-
 </html>
