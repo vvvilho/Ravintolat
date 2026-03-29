@@ -6,6 +6,18 @@
 </head>
 
 <body>
+    {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for message in messages %}
+        <p>
+          {{ message }}
+        </p>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
   {% if session.username %}
   <p>
     Olet kirjautunut nimellä {{ session.username }}
@@ -26,6 +38,7 @@
     <input type="submit" value="Kirjaudu" />
   </form>
   {% endif %}
+  <a href="/">Etusivu</a>
 </body>
 
 </html>

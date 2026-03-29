@@ -89,7 +89,8 @@ def create():
         sql = "INSERT INTO users (username, password_hash) VALUES (?, ?)"
         db.execute(sql, [username, password_hash])
     except sqlite3.IntegrityError:
-        return "VIRHE: tunnus on jo varattu"
+        flash("Tunnus on jo varattu")
+        return render_template("register.html")
 
     flash("Tunnus luotu")
     return redirect("/")
@@ -111,7 +112,8 @@ def login():
             session["username"] = username
             return redirect("/")
         else:
-            return "VIRHE: väärä tunnus tai salasana"
+            flash("Väärä tunnus tai salasana.")
+            return render_template("login.html")
 
 @app.route("/logout")
 def logout():
