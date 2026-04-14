@@ -13,7 +13,9 @@
     {% endwith %}
 
     {% if session.username %}
-        Olet kirjautunut: <strong><a href="/user/{{ session.user_id }}">{{ session.username }}</a></strong>
+        <div>
+        Olet kirjautunut tunnuksella: <strong><a href="/user/{{ session.user_id }}">{{ session.username }}</a></strong>
+        </div>
         <a href="/logout">Kirjaudu ulos</a> | 
         <a href="/restaurants/create">Lisää uusi ravintola</a> |
         <a href="/find_restaurants">Haku</a>
