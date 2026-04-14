@@ -7,6 +7,7 @@
     <h1>Luo uusi ravintola</h1>
     
     <form action="/restaurants/create" method="post">
+        <input type="hidden" name="csfr_token" value=""{{session.csrf_token}}>
         <p>
             Ravintolan nimi: <br />
             <input type="text" name="name" required value="{{ form.name if form else '' }}">

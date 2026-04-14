@@ -7,6 +7,7 @@
     <h1>Muokkaa ravintolaa: {{ restaurant.name }}</h1>
     
     <form action="/restaurants/edit/{{ restaurant.id }}" method="post">
+        <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
         <p>
             Ravintolan nimi: <br />
             <input type="text" name="name" required value="{{ restaurant.name }}">
@@ -57,7 +58,8 @@
     
     <form action="/restaurants/delete/{{ restaurant.id }}" method="post" 
           onsubmit="return confirm('Haluatko varmasti poistaa ravintolan? Kaikki kommentit ja tiedot poistuvat.');">
-        <button type="submit" >
+          <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+          <button type="submit" >
             Poista ravintola lopullisesti
         </button>
     </form>

@@ -1,10 +1,11 @@
 import sqlite3
 from flask import Flask
-from flask import redirect, render_template, request, session, url_for, flash
+from flask import redirect, render_template, request, session, url_for, flash, abort
 from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import config
 from functools import wraps
+import secrets
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -78,6 +79,8 @@ def register():
 
 @app.route("/create", methods=["POST"])
 def create():
+    if request.method == "POST":
+        check_csrf()
     username = request.form["username"]
     password1 = request.form["password1"]
     password2 = request.form["password2"]
@@ -110,10 +113,17 @@ def login():
         if result and check_password_hash(result[0]["password_hash"], password):
             session["user_id"] = result[0]["id"]
             session["username"] = username
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
             flash("Väärä tunnus tai salasana.")
             return render_template("login.html")
+
+from flask import abort 
+
+def check_csrf():
+    if session.get("csrf_token") != request.form.get("csrf_token"):
+        abort(403)
 
 @app.route("/logout")
 def logout():
@@ -123,15 +133,15 @@ def logout():
 
 @app.route("/restaurants/create", methods=["GET", "POST"])
 def restaurants_create():
-
     user_id = session.get("user_id")
     if not user_id:
         return "Sinun täytyy kirjautua sisään lisätäksesi ravintolan"
 
     cities = db.query("SELECT id, name FROM cities ORDER BY name")
     categories = db.query("SELECT id, name FROM categories ORDER BY name")
-
+    
     if request.method == "POST":
+        check_csrf()
         name = request.form.get("name", "").strip()
         description = request.form.get("description", "").strip()
         city_id = request.form.get("city_id")  
@@ -182,6 +192,9 @@ def edit_restaurant(restaurant_id):
     if restaurant["created_by"] != user_id:
         flash("Voit muokata vain omia ilmoituksiasi.")
         return redirect("/")
+    
+    if request.method == "POST":
+        check_csrf()
 
     cities = db.query("SELECT id, name FROM cities ORDER BY name")
     categories = db.query("SELECT id, name FROM categories ORDER BY name")
@@ -224,11 +237,18 @@ def edit_restaurant(restaurant_id):
 
 @app.route("/restaurants/delete/<int:restaurant_id>", methods=["POST"])
 def delete_restaurant(restaurant_id):
-
-
+    user_id = session.get("user_id")
+    if not user_id:
+        flash("Sinun täytyy kirjautua sisään poistaaksesi")
+        return redirect("/login")
+    check_csrf()
     res = db.query("SELECT created_by FROM restaurants WHERE id = ?", [restaurant_id])
     if not res:
         return "Ravintolaa ei löytynyt", 404
+    
+    if res[0]["created_by"] != user_id:
+        flash("Voit poistaa vain omia iloituksiasi.")
+        return redirect("/")
     
     db.execute("DELETE FROM restaurants WHERE id = ?", [restaurant_id])
     
