@@ -224,19 +224,12 @@ def edit_restaurant(restaurant_id):
 
 @app.route("/restaurants/delete/<int:restaurant_id>", methods=["POST"])
 def delete_restaurant(restaurant_id):
-    user_id = session.get("user_id")
-    if not user_id:
-        flash("Kirjaudu sisään poistaaksesi.")
-        return redirect("/login")
+
 
     res = db.query("SELECT created_by FROM restaurants WHERE id = ?", [restaurant_id])
     if not res:
         return "Ravintolaa ei löytynyt", 404
     
-    if res[0]["created_by"] != user_id:
-        flash("Voit poistaa vain omia ilmoituksiasi.")
-        return redirect("/")
-
     db.execute("DELETE FROM restaurants WHERE id = ?", [restaurant_id])
     
     flash("Ravintola poistettu onnistuneesti.")
