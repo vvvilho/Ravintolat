@@ -13,7 +13,7 @@
     {% endwith %}
 
     {% if session.username %}
-        <p>Olet kirjautunut nimellä <strong>{{ session.username }}</strong></p>
+        Olet kirjautunut: <strong><a href="/user/{{ session.user_id }}">{{ session.username }}</a></strong>
         <a href="/logout">Kirjaudu ulos</a> | 
         <a href="/restaurants/create">Lisää uusi ravintola</a> |
         <a href="/find_restaurants">Haku</a>

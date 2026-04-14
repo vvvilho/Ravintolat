@@ -1,0 +1,13 @@
+<h2>Käyttäjän {{ username }} profiili</h2>
+<p>Lisättyjä ravintoloita yhteensä: <strong>{{ count }}</strong></p>
+
+<h3>Lisäämät kohteet:</h3>
+<ul>
+    {% for r in restaurants %}
+        <li><a href="/restaurant/{{ r.id }}">{{ r.name }}</a></li>
+    {% else %}
+        <li>Tämä käyttäjä ei ole vielä lisännyt ravintoloita.</li>
+    {% endfor %}
+</ul>
+<hr>
+<a href="/">Takaisin etusivulle</a>

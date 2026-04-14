@@ -48,7 +48,7 @@ def find_restaurants():
 @app.route("/restaurant/<int:restaurant_id>")
 def show_restaurant(restaurant_id):
     sql_res = """
-            SELECT r.*, c.name AS city_name, u.username AS creator_name
+            SELECT r.*, c.name AS city_name, u.username AS creator_name, u.id AS creator_id
             FROM restaurants r
             LEFT JOIN cities c ON r.city_id = c.id
             LEFT JOIN users u ON r.created_by = u.id
@@ -254,3 +254,19 @@ def delete_restaurant(restaurant_id):
     
     flash("Ravintola poistettu onnistuneesti.")
     return redirect("/")
+
+@app.route("/user/<int:user_id>")
+def user_page(user_id):
+    user_info = db.query("SELECT username FROM users WHERE id = ?", [user_id])
+    if not user_info:
+        return "Käyttäää ei löydy", 404
+    
+    sql = "SELECT id, name FROM restaurants WHERE created_by = ? ORDER BY name"
+    restaurants = db.query(sql, [user_id])
+
+    count = len(restaurants)
+    return render_template("user_page.html",
+                           username = user_info[0]["username"],
+                           restaurants = restaurants,
+                           count = count)
+
