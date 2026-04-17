@@ -7,7 +7,7 @@
     <h1>Muokkaa ravintolaa: {{ restaurant.name }}</h1>
     
     <form action="/restaurants/edit/{{ restaurant.id }}" method="post">
-        <input type="hidden" name="csrf_token" value="{{session.csrf_token}}">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         <p>
             Ravintolan nimi: <br />
             <input type="text" name="name" required value="{{ restaurant.name }}">

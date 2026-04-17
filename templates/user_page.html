@@ -1,13 +1,32 @@
-<h2>Käyttäjän {{ username }} profiili</h2>
-<p>Lisättyjä ravintoloita yhteensä: <strong>{{ count }}</strong></p>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Käyttäjä {{ username }}</title>
+</head>
+<body>
+    <a href="/">← Takaisin etusivulle</a>
+    <hr>
+    <h1>Käyttäjä: {{ username }}</h1>
 
-<h3>Lisäämät kohteet:</h3>
-<ul>
-    {% for r in restaurants %}
-        <li><a href="/restaurant/{{ r.id }}">{{ r.name }}</a></li>
+    <h3>Lisätyt ravintolat ({{ count }})</h3>
+    <ul>
+    {% for res in restaurants %}
+        <li><a href="/restaurant/{{ res.id }}">{{ res.name }}</a></li>
     {% else %}
-        <li>Tämä käyttäjä ei ole vielä lisännyt ravintoloita.</li>
+        <li>Ei lisättyjä ravintoloita.</li>
     {% endfor %}
-</ul>
-<hr>
-<a href="/">Takaisin etusivulle</a>
+    </ul>
+
+    <hr>
+
+    <h3>Suosikit ❤️</h3>
+    <ul>
+    {% for fav in favorites %}
+        <li><a href="/restaurant/{{ fav.id }}">{{ fav.name }}</a></li>
+    {% else %}
+        <li>Ei suosikkeja merkittynä.</li>
+    {% endfor %}
+    </ul>
+
+</body>
+</html>

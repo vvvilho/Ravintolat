@@ -7,11 +7,31 @@
     <a href="/">← Takaisin listaukseen</a>
     <hr>
 
-    <h1>{{ restaurant.name }}</h1>
-    
+    <h1>
+        {{ restaurant.name }}
+        {% if session.user_id %}
+            <form action="/restaurant/{{ restaurant.id }}/favorite" method="POST" style="display:inline; margin-left: 10px;">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                <button type="submit" style="background:none; border:none; cursor:pointer; font-size: 1.5rem;">
+                    {{ "❤️" if is_favorite else "🤍" }}
+                </button>
+            </form>
+        {% endif %}
+    </h1>
+    <p style="font-size: 1.1rem;">
+        <strong>Arvosana:</strong> 
+        {% if average_stars > 0 %}
+            <span style="color: #f39c12;">{{ "⭐" }}</span> 
+            <strong>{{ average_stars }}</strong> / 5 
+            <small style="color: gray;">({{ comments|length }} arvostelua)</small>
+        {% else %}
+            <span style="color: gray;">Ei vielä arvosteluja</span>
+        {% endif %}
+    </p>
+
     <p><strong>Kaupunki:</strong> {{ restaurant.city_name or "Ei ilmoitettu" }}</p>
     <p><strong>Osoite:</strong> {{ restaurant.address or "Ei osoitetta" }}</p>
-    <p><strong>Hintataso:</strong> {{ "€" * (restaurant.price_level or 0) }}</p>
+    <p><strong>Hintataso:</strong> {{ "€" * (restaurant.price_level or 0) if restaurant.price_level else "Ei tiedossa" }}</p>
     
     <h3>Kategoriat:</h3>
     {% if categories %}
@@ -28,10 +48,49 @@
     <p style="white-space: pre-wrap;">{{ restaurant.description or "Ei kuvausta saatavilla." }}</p>
 
     <hr>
+
+    <h3>Arvostelut</h3>
+    
+    {% if session.user_id %}
+        <form action="/restaurant/{{ restaurant.id }}/comment" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            <p>
+                <strong>Lisää oma arvostelu:</strong><br>
+                Arvosana: 
+                <select name="stars">
+                    <option value="5">5/5</option>
+                    <option value="4">4/5</option>
+                    <option value="3">3/5</option>
+                    <option value="2">2/5</option>
+                    <option value="1">1/5</option>
+                </select>
+            </p>
+            <p>
+                <textarea name="content" rows="3" cols="40" placeholder="Millaista ruoka oli?" required></textarea>
+            </p>
+            <button type="submit">Lähetä arvostelu</button>
+        </form>
+    {% else %}
+        <p><a href="/login">Kirjaudu sisään</a> jättääksesi arvostelun.</p>
+    {% endif %}
+
+    <div style="margin-top: 20px;">
+        {% for c in comments %}
+            <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
+                <strong>{{ c.username }}</strong> — {{ "⭐" * c.stars }}<br>
+                {{ c.content }}<br>
+                <small style="color: gray;">{{ c.created_at.strftime('%d.%m.%Y %H:%M') if c.created_at.strftime else c.created_at }}</small>
+            </div>
+        {% else %}
+            <p>Ei vielä arvosteluja. Ole ensimmäinen!</p>
+        {% endfor %}
+    </div>
+
+    <hr>
     <small>
     Ilmoituksen lisäsi: 
     <a href="/user/{{ restaurant.creator_id }}">{{ restaurant.creator_name }}</a> 
-    ({{ restaurant.created_at }})
+    ({{ restaurant.created_at.strftime('%d.%m.%Y') if restaurant.created_at.strftime else restaurant.created_at }})
     </small>
 
     {% if session.user_id == restaurant.created_by %}

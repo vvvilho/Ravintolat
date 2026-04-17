@@ -58,6 +58,25 @@ def show_restaurant(restaurant_id):
 
     if not res:
         return "Ravintolaa ei löytynyt", 404
+    
+    comments = db.query("""
+        SELECT c.content, c.stars, c.created_at, u.username 
+        FROM comments c 
+        JOIN users u ON c.user_id = u.id 
+        WHERE c.restaurant_id = ? 
+        ORDER BY c.created_at DESC
+    """, [restaurant_id])
+
+    average_stars = 0
+    if comments:
+        total_stars = sum(c["stars"] for c in comments if c["stars"])
+        average_stars = round(total_stars / len(comments), 1)
+    is_favorite = False    
+    if session.get("user_id"):
+        fav = db.query("SELECT 1 FROM favorites WHERE user_id = ? AND restaurant_id = ?", 
+                       [session["user_id"], restaurant_id])  
+        if fav:
+            is_favorite = True
 
     restaurant = res[0]
 
@@ -69,7 +88,7 @@ def show_restaurant(restaurant_id):
     """
     categories = db.query(sql_cats, [restaurant_id])
 
-    return render_template("restaurant.html", restaurant=restaurant, categories=categories)
+    return render_template("restaurant.html", restaurant=restaurant, categories=categories, comments=comments, is_favorite=is_favorite, average_stars=average_stars)
 
 
 
@@ -261,12 +280,61 @@ def user_page(user_id):
     if not user_info:
         return "Käyttäää ei löydy", 404
     
-    sql = "SELECT id, name FROM restaurants WHERE created_by = ? ORDER BY name"
-    restaurants = db.query(sql, [user_id])
 
-    count = len(restaurants)
+    sql_own = "SELECT id, name FROM restaurants WHERE created_by = ? ORDER BY name"
+    own_restaurants = db.query(sql_own, [user_id])
+
+    sql_favs = """
+        SELECT r.id, r.name 
+        FROM restaurants r
+        JOIN favorites f ON r.id = f.restaurant_id
+        WHERE f.user_id = ?
+        ORDER BY r.name
+    """
+    favorite_restaurants = db.query(sql_favs, [user_id])
+
     return render_template("user_page.html",
-                           username = user_info[0]["username"],
-                           restaurants = restaurants,
-                           count = count)
+                           username=user_info[0]["username"],
+                           restaurants=own_restaurants,
+                           favorites=favorite_restaurants,
+                           count=len(own_restaurants))
 
+@app.route("/restaurant/<int:id>/favorite", methods=["POST"])
+def toggle_favorite(id):
+    check_csrf()
+    user_id = session.get("user_id")
+    if not user_id:
+        return redirect("/login")
+    
+    existing = db.query("SELECT 1 FROM favorites WHERE user_id = ? AND restaurant_id = ?", [user_id, id])
+    if existing:
+        db.execute("DELETE FROM favorites WHERE user_id = ? AND restaurant_id = ?", [user_id, id])
+        flash("Poistettu suosikeista.")
+    else:
+        db.execute("INSERT INTO favorites (user_id, restaurant_id) VALUES (?, ?)", [user_id, id])
+        flash("Lisätty suosikkeihin!")
+        
+    return redirect(f"/restaurant/{id}")
+
+@app.route("/restaurant/<int:id>/comment", methods=["POST"])
+def add_comment(id):
+    check_csrf()
+    user_id = session.get("user_id")
+    if not user_id:
+        flash("Kirjaudu sisään arvostellaksesi.")
+        return redirect("/login")
+
+    content = request.form.get("content", "").strip()
+    stars = request.form.get("stars")
+
+    if not content:
+        flash("Arvostelu ei voi olla tyhjä.")
+        return redirect(f"/restaurant/{id}")
+
+    db.execute("""
+        INSERT INTO comments (restaurant_id, user_id, content, stars) 
+        VALUES (?, ?, ?, ?)
+    """, [id, user_id, content, int(stars) if stars else 5])
+
+    flash("Arvostelu lisätty!")
+    return redirect(f"/restaurant/{id}")
