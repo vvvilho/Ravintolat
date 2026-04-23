@@ -1,11 +1,23 @@
 import sqlite3
-from flask import Flask
-from flask import redirect, render_template, request, session, url_for, flash, abort
-from werkzeug.security import generate_password_hash, check_password_hash
-import db
-import config
 from functools import wraps
 import secrets
+
+from flask import (
+    Flask,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+    flash,
+    abort
+)
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
+import db
+import config
+
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -24,16 +36,16 @@ def index():
 
 @app.route("/find_restaurants")
 def find_restaurants():
-    q = request.args.get("q", "").strip()
+    query = request.args.get("query", "").strip()
     params = []
     sql = """
         SELECT r.id, r.name, r.description, r.created_by
         FROM restaurants r
     """
     where = []
-    if q:
+    if query:
         where.append("(r.name LIKE ? OR r.description LIKE ?)")
-        like = f"%{q}%"
+        like = f"%{query}%"
         params.extend([like, like])
 
     if where:
@@ -42,7 +54,7 @@ def find_restaurants():
     sql += " ORDER BY r.name COLLATE NOCASE"
 
     rows = db.query(sql, params)
-    return render_template("restaurants_list.html", items=rows, q=q)
+    return render_template("restaurants_list.html", items=rows, query=query)
 
 
 @app.route("/restaurant/<int:restaurant_id>")
