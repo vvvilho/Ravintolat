@@ -32,13 +32,11 @@ def create_restaurant(name, description, city_id, price_level, address, user_id)
         VALUES (?, ?, ?, ?, ?, ?)
     """
     db.execute(sql, [name, description, city_id, price_level, address, user_id])
-    
     res = db.query("""
         SELECT id FROM restaurants 
         WHERE name = ? AND created_by = ? 
         ORDER BY id DESC LIMIT 1
     """, [name, user_id])
-    
     return res[0]["id"] if res else None
 
 def get_restaurant_by_id(restaurant_id):
