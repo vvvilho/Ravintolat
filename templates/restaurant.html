@@ -78,7 +78,7 @@
         {% for c in comments %}
             <div style="border-bottom: 1px solid #eee; padding: 10px 0;">
                 <strong>{{ c.username }}</strong> — {{ "⭐" * c.stars }}<br>
-                {{ c.content }}<br>
+                {{ c.content | show_lines }}<br>
                 <small style="color: gray;">{{ c.created_at.strftime('%d.%m.%Y %H:%M') if c.created_at.strftime else c.created_at }}</small>
             </div>
         {% else %}

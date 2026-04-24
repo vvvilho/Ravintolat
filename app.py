@@ -1,10 +1,13 @@
-from flask import Flask, redirect, render_template, request, session, flash, abort
-from werkzeug.security import generate_password_hash, check_password_hash
 import secrets
-import config
-import models
-import db
 import sqlite3
+
+import markupsafe
+from flask import Flask, abort, flash, redirect, render_template, request, session
+from werkzeug.security import check_password_hash, generate_password_hash
+
+import config
+import db
+import models
 
 app = Flask(__name__)
 app.secret_key = config.secret_key
@@ -226,7 +229,7 @@ def edit_restaurant(restaurant_id):
                 models.add_restaurant_category(restaurant_id, int(cid))
 
         flash("Ilmoitus päivitetty onnistuneesti!")
-        return redirect("/")
+        return redirect(f"/restaurant/{restaurant_id}")
 
     return render_template("edit.html", restaurant=restaurant[0], cities=cities, categories=categories, current_cat_ids=current_cat_ids)
 
@@ -273,3 +276,10 @@ def add_comment(id):
 
     flash("Arvostelu lisätty!")
     return redirect(f"/restaurant/{id}")
+
+@app.template_filter()
+def show_lines(content):
+    content = str(markupsafe.escape(content))
+    content = content.replace("\n", "<br />")
+    return markupsafe.Markup(content)
+    
