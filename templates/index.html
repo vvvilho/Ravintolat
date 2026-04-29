@@ -6,13 +6,13 @@
 </head>
 <body>
 
-    <div class="header">
+    <header class="header">
         <h1>Ravintolat</h1>
-    </div>
+    </header>
 
     {% with messages = get_flashed_messages() %}
         {% if messages %}
-            <div class="flash-container">
+            <div class="flash-container" role="alert">
                 {% for message in messages %}
                     <p class="flash-message">{{ message }}</p>
                 {% endfor %}
@@ -20,27 +20,27 @@
         {% endif %}
     {% endwith %}
 
-    <div class="nav-container">
+    <nav class="nav-container">
         {% if session.username %}
             <div class="user-status">
                 Olet kirjautunut tunnuksella: 
                 <strong><a href="/user/{{ session.user_id }}" class="user-link">{{ session.username }}</a></strong>
             </div>
             <div class="nav-links">
-                <a href="/logout">Kirjaudu ulos</a> <span class="separator">/</span> 
-                <a href="/restaurants/create">Lisää uusi ravintola</a> <span class="separator">/</span> 
-                <a href="/find_restaurants">Haku</a>
+                <a href="/logout" aria-label="Kirjaudu ulos">Kirjaudu ulos</a> <span class="separator">/</span> 
+                <a href="/restaurants/create" aria-label="Lisää uusi ravintola">Lisää uusi ravintola</a> <span class="separator">/</span> 
+                <a href="/find_restaurants" aria-label="Hae ravintoloita">Haku</a>
             </div>
         {% else %}
             <div class="nav-links">
-                <a href="/login">Kirjaudu sisään</a> <span class="separator">/</span> 
-                <a href="/register">Luo tunnus</a> <span class="separator">/</span> 
-                <a href="/find_restaurants">Haku</a>
+                <a href="/login" aria-label="Kirjaudu sisään">Kirjaudu sisään</a> <span class="separator">/</span> 
+                <a href="/register" aria-label="Luo tunnus">Luo tunnus</a> <span class="separator">/</span> 
+                <a href="/find_restaurants" aria-label="Hae ravintoloita">Haku</a>
             </div>
         {% endif %}
-    </div>
+    </nav>
 
-    <div class="content-section">
+    <main class="content-section">
         <h2>Selaa ravintoloita</h2>
         
         {% if restaurants %}
@@ -55,7 +55,7 @@
 
                     {% if session.user_id and session.user_id == r.created_by %}
                         <div class="owner-actions">
-                            <a href="/restaurants/edit/{{ r.id }}" class="edit-link">Muokkaa / Poista</a>
+                            <a href="/restaurants/edit/{{ r.id }}" class="edit-link" aria-label="Muokkaa tai poista ravintola">Muokkaa / Poista</a>
                         </div>
                     {% endif %}
                 </div>
@@ -64,7 +64,7 @@
         {% else %}
             <p class="empty-msg">Tietokannassa ei ole vielä ravintoloita.</p>
         {% endif %}
-    </div>
+    </main>
 
 </body>
 </html>

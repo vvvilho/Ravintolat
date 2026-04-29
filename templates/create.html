@@ -9,20 +9,21 @@
     
     <form action="/restaurants/create" method="post">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        
         <p>
-            Ravintolan nimi: <br />
-            <input type="text" name="name" required value="{{ form.name if form else '' }}">
+            <label for="name">Ravintolan nimi:</label><br />
+            <input type="text" id="name" name="name" required value="{{ form.name if form else '' }}">
         </p>
         <p>
-            Kuvaus: <br />
-            <textarea name="description" rows="8" cols="60">{{ form.description if form else '' }}</textarea>
+            <label for="description">Kuvaus:</label><br />
+            <textarea id="description" name="description" rows="8" cols="60">{{ form.description if form else '' }}</textarea>
         </p>
         <p>
-            Osoite: <br />
-            <input type="text" name="address" value="{{ form.address if form else '' }}">
+            <label for="address">Osoite:</label><br />
+            <input type="text" id="address" name="address" value="{{ form.address if form else '' }}">
         </p>
         <p>
-            Kaupunki: <br />
+            <label for="city_id">Kaupunki:</label><br />
             <select id="city_id" name="city_id">
                 <option value="">-- Valitse kaupunki --</option>
                 {% for c in cities %}
@@ -31,7 +32,7 @@
             </select>
         </p>
         <p>
-            Hintataso: <br />
+            <label for="price_level">Hintataso:</label><br />
             <select id="price_level" name="price_level">
                 <option value="">--</option>
                 <option value="1">€</option>
@@ -56,5 +57,4 @@
     </form>
     <a href="/">Etusivu</a>
 </body>
-</html>
 </html>

@@ -8,40 +8,34 @@
 
 <body>
     {% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <div class="flash-messages">
-      {% for message in messages %}
-        <p>
-          {{ message }}
-        </p>
-      {% endfor %}
-    </div>
-  {% endif %}
-{% endwith %}
+    {% if messages %}
+        <div class="flash-messages" role="alert">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
 
-  {% if session.username %}
-  <p>
-    Olet kirjautunut nimellä {{ session.username }}
-  </p>
-  <p>
-    <a href="/logout">Kirjaudu ulos</a>
-  </p>
-{% else %}
-  <form action="/login" method="post">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    
-    <p>
-      Tunnus: <br />
-      <input type="text" name="username" />
-    </p>
-    <p>
-      Salasana: <br />
-      <input type="password" name="password" />
-    </p>
-    <input type="submit" value="Kirjaudu" />
-  </form>
-  {% endif %}
-  <a href="/">Etusivu</a>
+    {% if session.username %}
+        <p>Olet kirjautunut nimellä {{ session.username }}</p>
+        <p><a href="/logout">Kirjaudu ulos</a></p>
+    {% else %}
+        <form action="/login" method="post">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            
+            <p>
+                <label for="username">Tunnus:</label><br />
+                <input type="text" id="username" name="username" />
+            </p>
+            <p>
+                <label for="password">Salasana:</label><br />
+                <input type="password" id="password" name="password" />
+            </p>
+            <input type="submit" value="Kirjaudu" />
+        </form>
+    {% endif %}
+    <a href="/">Etusivu</a>
 </body>
 
 </html>

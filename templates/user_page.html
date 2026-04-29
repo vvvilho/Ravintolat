@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="fi">
 <head>
     <title>Käyttäjä {{ username }} - Ravintolat</title>
     <link rel="stylesheet" href="/static/main.css">
 </head>
 <body>
-    <div class="nav-links">
+    <nav class="nav-links">
         <a href="/">← Takaisin etusivulle</a>
-    </div>
+    </nav>
     <hr>
 
-    <div class="header">
+    <header class="header">
         <h1>Profiili: {{ username }}</h1>
-    </div>
+    </header>
 
-    <div class="content-section">
-        <div class="profile-card">
-            <h3>Lisätyt ravintolat ({{ count }})</h3>
+    <main class="content-section">
+        <section class="profile-card">
+            <h2>Lisätyt ravintolat ({{ count }})</h2>
             <div class="restaurant-list-mini">
                 {% for res in restaurants %}
                     <div class="mini-card">
@@ -26,10 +26,10 @@
                     <p class="empty-msg">Ei lisättyjä ravintoloita.</p>
                 {% endfor %}
             </div>
-        </div>
+        </section>
 
-        <div class="profile-card" style="margin-top: 30px;">
-            <h3>Suosikit ❤️</h3>
+        <section class="profile-card" style="margin-top: 30px;">
+            <h2>Suosikit ❤️</h2>
             <div class="restaurant-list-mini">
                 {% for fav in favorites %}
                     <div class="mini-card favorite-highlight">
@@ -39,8 +39,7 @@
                     <p class="empty-msg">Ei suosikkeja merkittynä.</p>
                 {% endfor %}
             </div>
-        </div>
-    </div>
-
+        </section>
+    </main>
 </body>
 </html>

@@ -9,17 +9,18 @@
     
     <form action="/restaurants/edit/{{ restaurant.id }}" method="post">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        
         <p>
-            Ravintolan nimi: <br />
-            <input type="text" name="name" required value="{{ restaurant.name }}">
+            <label for="name">Ravintolan nimi:</label><br />
+            <input type="text" id="name" name="name" required value="{{ restaurant.name }}">
         </p>
         <p>
-            Kuvaus: <br />
-            <textarea name="description" rows="5" cols="40">{{ restaurant.description }}</textarea>
+            <label for="description">Kuvaus:</label><br />
+            <textarea id="description" name="description" rows="5" cols="40">{{ restaurant.description }}</textarea>
         </p>
         <p>
-            Kaupunki: <br />
-            <select name="city_id">
+            <label for="city_id">Kaupunki:</label><br />
+            <select id="city_id" name="city_id">
                 <option value="">-- Valitse --</option>
                 {% for c in cities %}
                 <option value="{{ c.id }}" {% if c.id == restaurant.city_id %}selected{% endif %}>
@@ -28,12 +29,13 @@
                 {% endfor %}
             </select>
         </p>
-        <p>Osoite:<br>
-        <input type="text" name="address" value="{{ restaurant.address }}">
+        <p>
+            <label for="address">Osoite:</label><br />
+            <input type="text" id="address" name="address" value="{{ restaurant.address }}">
         </p>
         <p>
-            Hintataso: <br />
-            <select name="price_level">
+            <label for="price_level">Hintataso:</label><br />
+            <select id="price_level" name="price_level">
                 {% for i in range(1, 5) %}
                 <option value="{{ i }}" {% if i == restaurant.price_level %}selected{% endif %}>
                     {{ "€" * i }}
@@ -63,9 +65,9 @@
     <form action="/restaurants/delete/{{ restaurant.id }}" method="post" 
           onsubmit="return confirm('Haluatko varmasti poistaa ravintolan? Kaikki kommentit ja tiedot poistuvat.');">
           <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-          <button type="submit" >
+          <button type="submit">
             Poista ravintola lopullisesti
-        </button>
+          </button>
     </form>
 </div>
 </body>

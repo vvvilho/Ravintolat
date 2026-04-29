@@ -9,13 +9,13 @@
   <h1>Ravintolat</h1>
 
   <form method="get" action="{{ url_for('find_restaurants') }}">
-    <input type="text" name="query" placeholder="Hae nimellä tai kuvauksella" value="{{ query|e }}">
+    <label for="query">Hae ravintoloita:</label><br />
+    <input type="text" id="query" name="query" placeholder="Hae nimellä tai kuvauksella" value="{{ query|e }}">
     <button type="submit">Hae</button>
     {% if query %}
       <a href="{{ url_for('find_restaurants') }}" style="margin-left:8px">Tyhjennä</a>
     {% endif %}
   </form>
-
 
   {% if query %}
     {% if items %}
@@ -34,7 +34,6 @@
     <p>Ei tuloksia.</p>
   {% endif %}
     {% endif %}
-
 
   <p><a href="/">Etusivu</a></p>
 </body>

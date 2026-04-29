@@ -14,10 +14,9 @@
         <h1>
             {{ restaurant.name }}
             {% if session.user_id %}
-                <!-- Huom: action-polku pysyy samana, vaikka app.py:ssä nimi muuttui -->
                 <form action="/restaurant/{{ restaurant.id }}/favorite" method="POST" style="display:inline; margin-left: 10px;">
                     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                    <button type="submit" class="favorite-btn">
+                    <button type="submit" class="favorite-btn" aria-label="Merkitse suosikiksi">
                         {{ "❤️" if is_favorite else "🤍" }}
                     </button>
                 </form>
@@ -65,9 +64,8 @@
                 <form action="/restaurant/{{ restaurant.id }}/comment" method="POST">
                     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                     <p>
-                        <strong>Lisää oma arvostelu:</strong><br>
-                        Arvosana: 
-                        <select name="stars" class="retro-input">
+                        <label for="stars">Arvosana:</label>
+                        <select id="stars" name="stars" class="retro-input">
                             <option value="5">5/5</option>
                             <option value="4">4/5</option>
                             <option value="3">3/5</option>
@@ -76,7 +74,8 @@
                         </select>
                     </p>
                     <p>
-                        <textarea name="content" rows="4" class="retro-input" placeholder="Millaista ruoka oli?" required></textarea>
+                        <label for="content">Arvostelu:</label><br />
+                        <textarea id="content" name="content" rows="4" class="retro-input" placeholder="Millaista ruoka oli?" required></textarea>
                     </p>
                     <button type="submit" class="retro-button">Lähetä arvostelu</button>
                 </form>
