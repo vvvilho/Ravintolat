@@ -26,11 +26,11 @@ def index():
 
     has_next = (page * per_page) < total_count
     has_prev = page > 1
-    
-    return render_template("index.html", 
-                           restaurants=restaurants, 
-                           page=page, 
-                           has_next=has_next, 
+
+    return render_template("index.html",
+                           restaurants=restaurants,
+                           page=page,
+                           has_next=has_next,
                            has_prev=has_prev)
 
 @app.route("/find_restaurants")
@@ -139,7 +139,7 @@ def user_page(user_id):
 
     own_restaurants = models.get_user_restaurants_paged(user_id, per_page, offset)
     total_own = models.get_user_restaurant_count(user_id)
-    
+
     favorite_restaurants = models.get_user_favorites(user_id)
 
     has_next = (page * per_page) < total_own
