@@ -9,6 +9,18 @@
 * Käyttäjä pystyy lisäämään ravintoloita suosikkeihin ja lisäämään arvostelun.
 * Sovellus näyttää arvostelujen keskiarvot.
 
+## Suuren tietomäärän testaus
+Sovellusta testattu suurella tietomäärällä suorituskyvyn varmistukseksi.
+Käytin datan generoimiseksi seed.py skriptiä, joka generoi tietokantaan 1000 ravintolaa yhdelle testikäyttäjälle, sekä loi 5000 kommenttia satunnaisesti eri ravintoloille.
+
+Testauksen pohjalta toteutetut optimoinnit
+
+Suuren datamäärän hallitsemiseksi sovelluksesta löytyy:
+1. Sivutus
+* Jotta kaikki ravintolat eivät lataudu yhdelle sivulle.
+2. Tietokantaindeksit.
+* Jotta hakeminen ja järjestäminen on nopeaa.
+
 ## Sovelluksen testaus
 
 Asenna `flask`-kirjasto:
