@@ -49,3 +49,103 @@ button:active {
     box-shadow: 0px 0px 0px;
     transform: translate(4px, 4px);
 }
+
+.favorite-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: transform 0.2s;
+}
+
+.favorite-btn:hover {
+    transform: scale(1.2);
+}
+
+.category-tag {
+    background: #e0e0e0;
+    padding: 2px 8px;
+    border: 1px solid #2b2b2b;
+    margin-right: 5px;
+    font-size: 0.8rem;
+    display: inline-block;
+}
+
+.comment-item {
+    background: #fff;
+    border: 1px solid #2b2b2b;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 3px 3px 0px #2b2b2b;
+}
+
+.timestamp {
+    color: #666;
+    display: block;
+    margin-top: 5px;
+}
+
+.profile-card {
+    background: var(--paper-white);
+    border: var(--border-thick);
+    padding: 20px;
+    box-shadow: 6px 6px 0px #2b2b2b;
+}
+
+.restaurant-list-mini {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.mini-card {
+    border: 1px solid #2b2b2b;
+    padding: 10px;
+    background: #fff;
+    transition: transform 0.1s;
+}
+
+.mini-card a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: bold;
+    display: block;
+}
+
+.mini-card:hover {
+    background-color: #fcf8e3;
+    transform: translateX(5px);
+}
+
+.favorite-highlight {
+    border-left: 5px solid var(--accent-red);
+}
+
+.empty-msg {
+    font-style: italic;
+    color: #666;
+}
+
+.search-container {
+    background: #f1f1f1;
+    padding: 20px;
+    border: var(--border-thick);
+    margin-bottom: 30px;
+    box-shadow: 4px 4px 0px #2b2b2b;
+}
+
+.search-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+
+@media (min-width: 600px) {
+    .search-form {
+        flex-direction: row;
+        justify-content: center;
+    }
+}

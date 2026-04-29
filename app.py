@@ -6,7 +6,6 @@ from flask import Flask, abort, flash, redirect, render_template, request, sessi
 from werkzeug.security import check_password_hash, generate_password_hash
 
 import config
-import db
 import models
 
 app = Flask(__name__)
@@ -61,23 +60,28 @@ def register():
         if "csrf_token" not in session:
             session["csrf_token"] = secrets.token_hex(16)
         return render_template("register.html")
+
     if request.method == "POST":
         check_csrf()
         username = request.form["username"]
         password1 = request.form["password1"]
         password2 = request.form["password2"]
+
         if password1 != password2:
             flash("VIRHE: Salasanat eivät ole samat.")
             return render_template("register.html")
+
         password_hash = generate_password_hash(password1)
+
         try:
-            db.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", [username, password_hash])
+            models.create_user(username, password_hash)
         except sqlite3.IntegrityError:
             flash("Tunnus on jo varattu.")
             return render_template("register.html")
 
         flash("Tunnus luotu onnistuneesti!")
         return redirect("/")
+
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -92,7 +96,7 @@ def login():
         username = request.form["username"]
         password = request.form["password"]
 
-        user = db.query("SELECT id, password_hash FROM users WHERE username = ?", [username])
+        user = models.get_user_by_username(username)
 
         if user and check_password_hash(user[0]["password_hash"], password):
             session["user_id"] = user[0]["id"]
@@ -151,7 +155,13 @@ def restaurants_create():
         p_lvl = int(price_level) if price_level and price_level.isdigit() else None
 
 
-        new_restaurant_id = models.create_restaurant(name, description, c_id, p_lvl, address, user_id)
+        new_restaurant_id = models.create_restaurant(
+            name,
+            description,
+            c_id,
+            p_lvl,
+            address,
+            user_id)
 
 
         selected_categories = request.form.getlist("categories")
@@ -165,22 +175,22 @@ def restaurants_create():
     return render_template("create.html", cities=cities, categories=categories)
 
 
-@app.route("/restaurant/<int:id>/favorite", methods=["POST"])
-def toggle_favorite(id):
+@app.route("/restaurant/<int:restaurant_id>/favorite", methods=["POST"])
+def toggle_favorite(restaurant_id):
     check_csrf()
     user_id = session.get("user_id")
     if not user_id:
+        flash("Kirjaudu sisään lisätäksesi suosikkeihin.")
         return redirect("/login")
 
-    existing = models.is_favorite(user_id, id)
-    if existing:
-        db.execute("DELETE FROM favorites WHERE user_id = ? AND restaurant_id = ?", [user_id, id])
-        flash("Poistettu suosikeista.")
-    else:
-        db.execute("INSERT INTO favorites (user_id, restaurant_id) VALUES (?, ?)", [user_id, id])
-        flash("Lisätty suosikkeihin!")
+    is_now_favorite = models.toggle_favorite(user_id, restaurant_id)
 
-    return redirect(f"/restaurant/{id}")
+    if is_now_favorite:
+        flash("Lisätty suosikkeihin!")
+    else:
+        flash("Poistettu suosikeista.")
+
+    return redirect(f"/restaurant/{restaurant_id}")
 
 @app.route("/restaurants/edit/<int:restaurant_id>", methods=["GET", "POST"])
 def edit_restaurant(restaurant_id):
@@ -212,7 +222,12 @@ def edit_restaurant(restaurant_id):
 
         if not name:
             flash("Nimi on pakollinen.")
-            return render_template("edit.html", restaurant=restaurant[0], cities=cities, categories=categories, current_cat_ids=current_cat_ids)
+            return render_template(
+                "edit.html",
+                restaurant=restaurant[0],
+                cities=cities,
+                categories=categories,
+                current_cat_ids=current_cat_ids)
 
         models.update_restaurant(
             restaurant_id,
@@ -231,7 +246,12 @@ def edit_restaurant(restaurant_id):
         flash("Ilmoitus päivitetty onnistuneesti!")
         return redirect(f"/restaurant/{restaurant_id}")
 
-    return render_template("edit.html", restaurant=restaurant[0], cities=cities, categories=categories, current_cat_ids=current_cat_ids)
+    return render_template(
+        "edit.html",
+        restaurant=restaurant[0],
+        cities=cities,
+        categories=categories,
+        current_cat_ids=current_cat_ids)
 
 
 @app.route("/restaurants/delete/<int:restaurant_id>", methods=["POST"])
@@ -257,8 +277,8 @@ def delete_restaurant(restaurant_id):
     flash(f"Ravintola {restaurant['name']} ja siihen liittyvät tiedot poistettu.")
     return redirect("/")
 
-@app.route("/restaurant/<int:id>/comment", methods=["POST"])
-def add_comment(id):
+@app.route("/restaurant/<int:restaurant_id>/comment", methods=["POST"])
+def add_comment(restaurant_id):
     check_csrf()
     user_id = session.get("user_id")
     if not user_id:
@@ -270,16 +290,15 @@ def add_comment(id):
 
     if not content:
         flash("Arvostelu ei voi olla tyhjä.")
-        return redirect(f"/restaurant/{id}")
+        return redirect(f"/restaurant/{restaurant_id}")
 
-    models.add_comment(id, user_id, content, int(stars) if stars else 5)
+    models.add_comment(restaurant_id, user_id, content, int(stars) if stars else 5)
 
     flash("Arvostelu lisätty!")
-    return redirect(f"/restaurant/{id}")
+    return redirect(f"/restaurant/{restaurant_id}")
 
 @app.template_filter()
 def show_lines(content):
     content = str(markupsafe.escape(content))
     content = content.replace("\n", "<br />")
     return markupsafe.Markup(content)
-

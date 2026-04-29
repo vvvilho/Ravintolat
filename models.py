@@ -1,4 +1,16 @@
 import db
+from db import execute
+
+def create_user(username, password_hash):
+    execute(
+        "INSERT INTO users (username, password_hash) VALUES (?, ?)",
+        [username, password_hash]
+    )
+
+def get_user_by_username(username):
+    sql = """SELECT id, password_hash FROM users WHERE username = ?"""
+    return db.query(sql, [username])
+
 
 def get_restaurants():
     sql = """
@@ -127,3 +139,16 @@ def add_comment(restaurant_id, user_id, content, stars):
 def delete_restaurant(restaurant_id):
     sql = "DELETE FROM restaurants WHERE id = ?"
     db.execute(sql, [restaurant_id])
+
+def toggle_favorite(user_id, restaurant_id):
+    sql_check = "SELECT 1 FROM favorites WHERE user_id = ? AND restaurant_id = ?"
+    existing = db.query(sql_check, [user_id, restaurant_id])
+
+    if existing:
+        sql_delete = "DELETE FROM favorites WHERE user_id = ? AND restaurant_id = ?"
+        db.execute(sql_delete, [user_id, restaurant_id])
+        return False
+    else:
+        sql_insert = "INSERT INTO favorites (user_id, restaurant_id) VALUES (?, ?)"
+        db.execute(sql_insert, [user_id, restaurant_id])
+        return True

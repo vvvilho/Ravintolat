@@ -1,33 +1,46 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Käyttäjä {{ username }}</title>
+    <title>Käyttäjä {{ username }} - Ravintolat</title>
     <link rel="stylesheet" href="/static/main.css">
 </head>
 <body>
-    <a href="/">← Takaisin etusivulle</a>
-    <hr>
-    <h1>Käyttäjä: {{ username }}</h1>
-
-    <h3>Lisätyt ravintolat ({{ count }})</h3>
-    <ul>
-    {% for res in restaurants %}
-        <li><a href="/restaurant/{{ res.id }}">{{ res.name }}</a></li>
-    {% else %}
-        <li>Ei lisättyjä ravintoloita.</li>
-    {% endfor %}
-    </ul>
-
+    <div class="nav-links">
+        <a href="/">← Takaisin etusivulle</a>
+    </div>
     <hr>
 
-    <h3>Suosikit ❤️</h3>
-    <ul>
-    {% for fav in favorites %}
-        <li><a href="/restaurant/{{ fav.id }}">{{ fav.name }}</a></li>
-    {% else %}
-        <li>Ei suosikkeja merkittynä.</li>
-    {% endfor %}
-    </ul>
+    <div class="header">
+        <h1>Profiili: {{ username }}</h1>
+    </div>
+
+    <div class="content-section">
+        <div class="profile-card">
+            <h3>Lisätyt ravintolat ({{ count }})</h3>
+            <div class="restaurant-list-mini">
+                {% for res in restaurants %}
+                    <div class="mini-card">
+                        <a href="/restaurant/{{ res.id }}">{{ res.name }}</a>
+                    </div>
+                {% else %}
+                    <p class="empty-msg">Ei lisättyjä ravintoloita.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="profile-card" style="margin-top: 30px;">
+            <h3>Suosikit ❤️</h3>
+            <div class="restaurant-list-mini">
+                {% for fav in favorites %}
+                    <div class="mini-card favorite-highlight">
+                        <a href="/restaurant/{{ fav.id }}">{{ fav.name }}</a>
+                    </div>
+                {% else %}
+                    <p class="empty-msg">Ei suosikkeja merkittynä.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 
 </body>
 </html>
