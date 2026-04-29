@@ -17,8 +17,21 @@ def check_csrf():
 
 @app.route("/")
 def index():
-    restaurants = models.get_restaurants()
-    return render_template("index.html", restaurants=restaurants)
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
+    offset = (page - 1) * per_page
+
+    restaurants = models.get_restaurants_paged(per_page, offset)
+    total_count = models.get_restaurant_count()
+
+    has_next = (page * per_page) < total_count
+    has_prev = page > 1
+    
+    return render_template("index.html", 
+                           restaurants=restaurants, 
+                           page=page, 
+                           has_next=has_next, 
+                           has_prev=has_prev)
 
 @app.route("/find_restaurants")
 def find_restaurants():
@@ -116,18 +129,31 @@ def logout():
 
 @app.route("/user/<int:user_id>")
 def user_page(user_id):
+    page = request.args.get("page", 1, type=int)
+    per_page = 10
+    offset = (page - 1) * per_page
+
     user_info = models.get_user_info(user_id)
     if not user_info:
         return "Käyttäjää ei löydy", 404
 
-    own_restaurants = models.get_user_restaurants(user_id)
+    own_restaurants = models.get_user_restaurants_paged(user_id, per_page, offset)
+    total_own = models.get_user_restaurant_count(user_id)
+    
     favorite_restaurants = models.get_user_favorites(user_id)
+
+    has_next = (page * per_page) < total_own
+    has_prev = page > 1
 
     return render_template("user_page.html",
                            username=user_info[0]["username"],
                            restaurants=own_restaurants,
                            favorites=favorite_restaurants,
-                           count=len(own_restaurants))
+                           count=total_own,
+                           user_id=user_id,
+                           page=page,
+                           has_next=has_next,
+                           has_prev=has_prev)
 
 @app.route("/restaurants/create", methods=["GET", "POST"])
 def restaurants_create():

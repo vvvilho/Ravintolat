@@ -61,6 +61,20 @@
                 </div>
             {% endfor %}
             </div>
+
+            <hr style="border: 1px dashed #2b2b2b; margin: 20px 0;">
+            <div style="text-align: center; font-family: 'Courier New', monospace;">
+                {% if has_prev %}
+                    <a href="{{ url_for('index', page=page-1) }}" class="retro-button" style="text-decoration: none; padding: 5px 10px;">← Edellinen</a>
+                {% endif %}
+
+                <span style="margin: 0 15px; font-weight: bold;">Sivu {{ page }}</span>
+
+                {% if has_next %}
+                    <a href="{{ url_for('index', page=page+1) }}" class="retro-button" style="text-decoration: none; padding: 5px 10px;">Seuraava →</a>
+                {% endif %}
+            </div>
+
         {% else %}
             <p class="empty-msg">Tietokannassa ei ole vielä ravintoloita.</p>
         {% endif %}

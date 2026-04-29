@@ -12,15 +12,6 @@ def get_user_by_username(username):
     return db.query(sql, [username])
 
 
-def get_restaurants():
-    sql = """
-    SELECT r.id, r.name, r.price_level, r.created_by, c.name AS city_name 
-    FROM restaurants r
-    LEFT JOIN cities c ON r.city_id = c.id
-    ORDER BY r.name;
-    """
-    return db.query(sql)
-
 def find_restaurants(query):
     sql = """
         SELECT r.id, r.name, r.description, r.price_level, c.name AS city_name
@@ -87,9 +78,6 @@ def get_user_info(user_id):
     sql = "SELECT username FROM users WHERE id = ?"
     return db.query(sql, [user_id])
 
-def get_user_restaurants(user_id):
-    sql = "SELECT id, name FROM restaurants WHERE created_by = ? ORDER BY name"
-    return db.query(sql, [user_id])
 
 def get_user_favorites(user_id):
     sql = """
@@ -152,3 +140,34 @@ def toggle_favorite(user_id, restaurant_id):
         sql_insert = "INSERT INTO favorites (user_id, restaurant_id) VALUES (?, ?)"
         db.execute(sql_insert, [user_id, restaurant_id])
         return True
+
+
+def get_restaurants_paged(limit, offset):
+    sql = """
+        SELECT r.id, r.name, r.price_level, r.created_by, c.name AS city_name 
+        FROM restaurants r 
+        LEFT JOIN cities c ON r.city_id = c.id 
+        ORDER BY r.created_at DESC
+        LIMIT ? OFFSET ?
+    """
+    return db.query(sql, [limit, offset])
+
+def get_restaurant_count():
+    sql = "SELECT COUNT(*) AS count FROM restaurants"
+    res = db.query(sql)
+    return res[0]["count"] if res else 0
+
+def get_user_restaurants_paged(user_id, limit, offset):
+    sql = """
+        SELECT id, name 
+        FROM restaurants 
+        WHERE created_by = ? 
+        ORDER BY id DESC 
+        LIMIT ? OFFSET ?
+    """
+    return db.query(sql, [user_id, limit, offset])
+
+def get_user_restaurant_count(user_id):
+    sql = "SELECT COUNT(*) AS count FROM restaurants WHERE created_by = ?"
+    res = db.query(sql, [user_id])
+    return res[0]["count"] if res else 0
