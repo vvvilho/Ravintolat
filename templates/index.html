@@ -1,52 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="/static/main.css">
     <title>Ravintolat</title>
 </head>
 <body>
-    <h1>Ravintolat</h1>
+
+    <div class="header">
+        <h1>Ravintolat</h1>
+    </div>
 
     {% with messages = get_flashed_messages() %}
-        {% for message in messages %}
-            <p style="font-weight: bold;">{{ message }}</p>
-        {% endfor %}
+        {% if messages %}
+            <div class="flash-container">
+                {% for message in messages %}
+                    <p class="flash-message">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
     {% endwith %}
 
-    {% if session.username %}
-        <div>
-        Olet kirjautunut tunnuksella: <strong><a href="/user/{{ session.user_id }}">{{ session.username }}</a></strong>
-        </div>
-        <a href="/logout">Kirjaudu ulos</a> | 
-        <a href="/restaurants/create">Lisää uusi ravintola</a> |
-        <a href="/find_restaurants">Haku</a>
-    {% else %}
-        <a href="/login">Kirjaudu sisään</a> | 
-        <a href="/register">Luo tunnus</a> |
-        <a href="/find_restaurants">Haku</a>
-    {% endif %}
+    <div class="nav-container">
+        {% if session.username %}
+            <div class="user-status">
+                Olet kirjautunut tunnuksella: 
+                <strong><a href="/user/{{ session.user_id }}" class="user-link">{{ session.username }}</a></strong>
+            </div>
+            <div class="nav-links">
+                <a href="/logout">Kirjaudu ulos</a> <span class="separator">/</span> 
+                <a href="/restaurants/create">Lisää uusi ravintola</a> <span class="separator">/</span> 
+                <a href="/find_restaurants">Haku</a>
+            </div>
+        {% else %}
+            <div class="nav-links">
+                <a href="/login">Kirjaudu sisään</a> <span class="separator">/</span> 
+                <a href="/register">Luo tunnus</a> <span class="separator">/</span> 
+                <a href="/find_restaurants">Haku</a>
+            </div>
+        {% endif %}
+    </div>
 
-    <hr>
+    <div class="content-section">
+        <h2>Selaa ravintoloita</h2>
+        
+        {% if restaurants %}
+            <div class="restaurant-list">
+            {% for r in restaurants %}
+                <div class="restaurant-card">
+                    <h3><a href="/restaurant/{{ r.id }}">{{ r.name }}</a></h3>
+                    <p>
+                        <strong>Kaupunki:</strong> {{ r.city_name or "Ei tiedossa" }}<br>
+                        <strong>Hintataso:</strong> <span class="price-tags">{{ "€" * (r.price_level or 0) }}</span>
+                    </p>
 
-    <h2>Selaa ravintoloita</h2>
-    
-    {% if restaurants %}
-        <ul>
-        {% for r in restaurants %}
-            <li style="margin-bottom: 15px;">
-                <a href="/restaurant/{{ r.id }}">{{r.name}}</a> ({{ r.city_name or "Ei kaupunkia" }}) <br>
-                Hintataso: {{ "€" * (r.price_level or 0) }} <br>
-                {% if session.user_id and session.user_id == r.created_by %}
-                <small>
-                <a href="/restaurants/edit/{{ r.id }}">Muokkaa / Poista</a>
-                </small>
-                {% endif %}
-
-            </li>
-        {% endfor %}
-        </ul>
-    {% else %}
-        <p>Tietokannassa ei ole vielä ravintoloita.</p>
-    {% endif %}
+                    {% if session.user_id and session.user_id == r.created_by %}
+                        <div class="owner-actions">
+                            <a href="/restaurants/edit/{{ r.id }}" class="edit-link">Muokkaa / Poista</a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            </div>
+        {% else %}
+            <p class="empty-msg">Tietokannassa ei ole vielä ravintoloita.</p>
+        {% endif %}
+    </div>
 
 </body>
 </html>

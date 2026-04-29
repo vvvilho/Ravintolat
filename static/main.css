@@ -1,0 +1,51 @@
+:root {
+    --bg-color: #f4e9d5;     
+    --text-color: #2b2b2b;
+    --accent-red: #c0392b;   
+    --border-style: 3px solid #2b2b2b; 
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: "Courier New", Courier, monospace; 
+    padding: 40px;
+}
+
+h1 {
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--accent-red);
+    text-shadow: 2px 2px 0px #fff;
+}
+
+.nav-container {
+    background-color: var(--paper-white);
+    border: var(--border-thick);
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 8px 8px 0px #2b2b2b;
+}
+
+.restaurant-card {
+    background: #fff;
+    border: var(--border-style);
+    box-shadow: 8px 8px 0px #2b2b2b;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+button, .button {
+    background: var(--accent-red);
+    color: white;
+    border: var(--border-style);
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 4px 4px 0px #2b2b2b;
+}
+
+button:active {
+    box-shadow: 0px 0px 0px;
+    transform: translate(4px, 4px);
+}
