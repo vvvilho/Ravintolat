@@ -62,7 +62,8 @@ config.py:1:0: C0114: Missing module docstring (missing-module-docstring)
 config.py:1:0: C0103: Constant name "secret_key" doesn't conform to UPPER_CASE naming style (invalid-name)
 
 ------------------------------------------------------------------
-Your code has been rated at 8.27/10 (previous run: 8.18/10, +0.10)```
+Your code has been rated at 8.27/10 (previous run: 8.18/10, +0.10)
+```
 
 Käydään läpi raportti ja perustellaan miksi mainittuja asioita ei ole korjattu.
 
@@ -86,7 +87,8 @@ Koodi olisi mahdollista ilman ylimääräistä else -haaraa, mutta else on jäte
 
 Ilmoitus liittyy seuraavaan funktioon:
 
-```def execute(sql, params=[]):
+```
+def execute(sql, params=[]):
     con = get_connection()
     result = con.execute(sql, params)
     con.commit()
